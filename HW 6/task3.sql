@@ -1,45 +1,38 @@
-SELECT Staff_Name
-FROM Staff
-JOIN Bills ON Staff.Staff_No = Bills.Waiter_No
-WHERE Customer_Name = 'Tanya Singh';
+SELECT CONCAT(first_name, ' ', surname) AS Staff_Name
+FROM restStaff
+JOIN restBill ON restStaff.staff_no = restBill.waiter_no
+WHERE cust_name = 'Tanya Singh';
 
-SELECT DISTINCT Room_Date
-FROM Room_Allocations
-WHERE Headwaiter = (SELECT Staff_No FROM Staff WHERE Staff_Name = 'Charles')
-  AND Room_Name = 'Green'
-  AND Room_Date BETWEEN 160201 AND 160229;
+SELECT DISTINCT room_date
+FROM restRoom_management
+JOIN restStaff ON restRoom_management.headwaiter = restStaff.staff_no
+WHERE restStaff.first_name = 'Charles'
+  AND room_name = 'Green'
+  AND room_date BETWEEN 160201 AND 160229;
 
-SELECT Staff_Name
-FROM Staff
-WHERE Headwaiter = (SELECT Headwaiter FROM Staff WHERE Staff_Name = 'Zoe Ball');
+SELECT CONCAT(s1.first_name, ' ', s1.surname) AS Staff_Name
+FROM restStaff s1
+JOIN restStaff s2 ON s1.headwaiter = s2.headwaiter
+WHERE s2.first_name = 'Zoe' AND s2.surname = 'Ball';
 
-SELECT Customer_Name, Total_Amount, Staff_Name
-FROM Bills
-JOIN Staff ON Bills.Waiter_No = Staff.Staff_No
-ORDER BY Total_Amount DESC;
+SELECT cust_name, bill_total, CONCAT(first_name, ' ', surname) AS Staff_Name
+FROM restBill
+JOIN restStaff ON restBill.waiter_no = restStaff.staff_no
+ORDER BY bill_total DESC;
 
-SELECT Staff_Name
-FROM Staff
-WHERE Headwaiter IN (
-  SELECT Headwaiter
-  FROM Bills
-  WHERE Bill_No IN (00014, 00017)
-);
+SELECT CONCAT(first_name, ' ', surname) AS Staff_Name
+FROM restStaff
+JOIN restBill ON restStaff.headwaiter = restBill.headwaiter
+WHERE restBill.bill_no IN (14, 17);
 
-SELECT Staff_Name
-FROM Staff
-WHERE Staff_No IN (
-  SELECT Headwaiter
-  FROM Room_Allocations
-  WHERE Room_Date = 160312
-    AND Room_Name = 'Blue'
-)
+SELECT CONCAT(s.first_name, ' ', s.surname) AS Staff_Name
+FROM restStaff s
+JOIN restRoom_management rm ON s.staff_no = rm.headwaiter
+WHERE rm.room_date = 160312 AND rm.room_name = 'Blue'
+
 UNION
-SELECT Staff_Name
-FROM Staff
-WHERE Headwaiter IN (
-  SELECT Headwaiter
-  FROM Room_Allocations
-  WHERE Room_Date = 160312
-    AND Room_Name = 'Blue'
-);
+
+SELECT CONCAT(s.first_name, ' ', s.surname) AS Staff_Name
+FROM restStaff s
+JOIN restRoom_management rm ON s.headwaiter = rm.headwaiter
+WHERE rm.room_date = 160312 AND rm.room_name = 'Blue';
